@@ -1,0 +1,108 @@
+---
+output:
+  html_document: default
+  pdf_document: default
+---
+## From last time: how to get help
+
+```{r, eval=False}
+# ctrl + enter - run the code
+help(help)
+?help
+?'=='
+help('==')
+? == help
+help == help #R cannot compare functions among other stuff
+mean = mean
+mean
+?ggplot # ? - looks for the object
+??ggplot # ?? - looks for the string in the documentation
+help('??')
+?'??'
+??ggplot
+?mean
+??ggplot
+?summary
+summary(iris)
+str(iris)
+```
+
+Let's define our first function:
+```{r}
+double <- function(x){2*x}
+double(4)
+double(c(0,1,2))
+double(rep(3,3))
+```
+
+## How ggplot Works
+
+```{r, load, warning=FALSE}
+library(tidyverse)
+install.packages("gapminder")
+library(gapminder)
+help(gapminder)
+library(ggplot2)
+
+gapminder
+View(gapminder)
+
+p <- ggplot(data = gapminder,
+            mapping = aes(x = gdpPercap, y = lifeExp))
+p + geom_point()
+```
+
+```{r, geoms}
+library(ggplot2) # ggplot2 is the library that has the function ggplot
+p1 <- ggplot(data=gapminder, mapping = aes( x = year))
+p1 + geom_bar() # shows we have the same number of observations per year
+p2 <- ggplot(data=gapminder, mapping = aes( x = continent))
+p2 + geom_bar() # shows we have different number of observations per continent
+p3 <- ggplot(data=gapminder,mapping = aes(x = continent, y = lifeExp))
+p3 + geom_boxplot()
+p + geom_point() # Produces scatterplots
+ggplot(data = gapminder, mapping = aes(x = year)) + geom_bar() # Bar plots
+p + geom_boxplot() # boxplots
+```
+
+```{r}
+str(p)
+str(p + geom_point())
+```
+
+```{r, scatter_plot}
+p + geom_point()
+p + geom_smooth()
+p + geom_smooth(method = "lm")
+```
+
+```{r, smoothing_methods, eval=FALSE}
+?geom_smooth
+p + geom_point() + geom_smooth()
+p + geom_smooth() + geom_point()
+p + geom_point() + geom_smooth() + geom_smooth(method = "lm") + geom_smooth(method = "loess") 
+p + geom_point() + geom_smooth() + geom_smooth(method = "lm", color = "red")
+p + geom_point() + geom_smooth(color = "yellow")
+p + geom_point() + geom_smooth(color = "green") + scale_x_log10(labels = scales::dollar)
+?scales
+#package::something of that package
+```
+
+```{r, smoothing_methods, eval=FALSE}
+p <- ggplot(data = gapminder, mapping = aes(x=gdpPercap, y= lifeExp, color = "yellow"))
+p +geom_point()+scale_x_log10() 
+# It went wrong because it considered "yellow" as the data in which we base our color selection, and not as the color itself.
+p <- ggplot(data = gapminder, mapping = aes(x=gdpPercap, y= lifeExp, color = gdpPercap))
+p +geom_point()+scale_x_log10() 
+
+p <- ggplot(data = gapminder, mapping = aes(x=gdpPercap, y= lifeExp, color = continent))
+p +geom_point()+scale_x_log10()
+
+p <- ggplot(data = gapminder, mapping = aes(x=gdpPercap, y= lifeExp))
+p +geom_point(color = "yellow")
+# Here it changed the color because it is not in the mapping. IMPORTANT: not change color in the "mapping" section
+
+p <- ggplot(data = gapminder, mapping = aes(x=gdpPercap, y= lifeExp, color = continent, fill = continent))
+p + geom_point() + scale_x_log10(labels = scales::dollar) + geom_smooth(aes(color=continent))
+
+```

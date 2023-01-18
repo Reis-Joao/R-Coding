@@ -1,18 +1,12 @@
 ---
-title: 'Lecture 2: Chapter 3 by Kieran Healy'
+title: "Lecture 2: Chapter 3 by Kieran Healy"
 author: "Marc Kaufmann"
-date: "Feburary 2022"
-output:
-  pdf_document: default
-  html_document: default
+date: "January 2023"
+output: html_document
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-```
-
-```{r}
-2 + 2
 ```
 
 ## Note to the interested student
@@ -26,13 +20,6 @@ Try to follow along by typing it yourself, adding comments as you make mistakes 
 
 ```{r, load, warning=FALSE}
 library(tidyverse)
-install.packages("gapminder")
-library(gapminder)
-help(gapminder)
-
-p <- ggplot(data = gapminder,
-            mapping = aes(x = gdpPercap, y = lifeExp))
-p + geom_point()
 ```
 
 The code specifies the connections between the variables in the data on one hand and the colors, points, and shapes displayed on the screen on the other. These logical connections are called *aesthetic mappings* or simply *aesthetics*.
@@ -47,11 +34,12 @@ How to use ggplot:
   - these are called 'geoms' in ggplot's grammar, such as `geom_point()` giving scatter plots
   
   
-```{r, geoms}
+```{r, geoms, eval=FALSE}
 library(ggplot2)
-p + geom_point() # Produces scatterplots
-ggplot(data = gapminder, mapping = aes(x = year)) + geom_bar() # Bar plots
-p + geom_boxplot() # boxplots
+... + geom_point() # Produces scatterplots
+... + geom_bar() # Bar plots
+... + geom_boxplot() # boxplots
+... # 
 ```
 
 You link these steps by *literally* adding them together with `+` as we'll see.
@@ -100,9 +88,8 @@ We get a message that tells us that `geom_smooth()` is using the method = 'gam',
 
 ```{r, smoothing_methods, eval=FALSE}
 ?geom_smooth
-p + geom_point() + geom_smooth()
-p + geom_point() + geom_smooth() + geom_smooth(method = "lm") + geom_smooth(method = "loess") 
-p + geom_point() + geom_smooth() + geom_smooth(method = "lm", color = "red")
+p + geom_point() + geom_smooth() + geom_smooth(method = ...) + geom_smooth(method = ...)
+p + geom_point() + geom_smooth() + geom_smooth(method = ...) + geom_smooth(method = ..., color = "red")
 ```
 
 You may start to see why ggplots way of breaking up tasks is quite powerful: the geometric objects (long for geoms) can all reuse the *same* mapping of data to aesthetics, yet the results are quite different. And if we want later geoms to use different mappings, then we can override them -- but it isn't necessary.
@@ -148,7 +135,7 @@ p + geom_point() +
 
 ```{r, mapping_vs_setting}
 p <- ggplot(data = gapminder,
-            mapping = aes(x = gdpPercap, y = lifeExp, color = 'smooth'))
+            mapping = aes(x = gdpPercap, y = lifeExp, color = 'yellow'))
 p + geom_point() + scale_x_log10()
 ```
 
@@ -156,8 +143,8 @@ This is interesting (or annoying): the points are not yellow. How can we tell gg
 
 ```{r, yellow_points, eval=FALSE}
 p <- ggplot(data = gapminder,
-            mapping = aes(x = gdpPercap, y = lifeExp))
-p + geom_point(color = 'yellow') + scale_x_log10()
+            mapping = aes(x = gdpPercap, y = lifeExp, ...))
+p + geom_point(...) + scale_x_log10()
 ```
 
 **Exercise:** Based on the discussion in Chapter 3 of *Data Visualization* (read it), describe in your words what is going on. 
@@ -178,7 +165,7 @@ p + geom_point() + geom_smooth(color = "orange", se = FALSE, size = 8, method = 
 **Exercise:** Write down what all those arguments in `geom_smooth(...)` do.
 
 ```{r, gapminder_with_labels}
-p + geom_point(alpha = 0.3) +
+p + geom_point(alpha = 0.3) + 
   geom_smooth(method = "gam") + 
   scale_x_log10(labels = scales::dollar) +
   labs(x = "GDP Per Capita", y = "Life Expectancy in Years",
@@ -192,11 +179,16 @@ Coloring by continent:
 ```{r, gapminder_color_by_continent}
 library(scales)
 p <- ggplot(data = gapminder,
-            mapping = aes(x = gdpPercap, y = lifeExp))
+            mapping = aes(x = gdpPercap, y = lifeExp, color = continent, fill = continent))
 p + geom_point()
 p + geom_point() + scale_x_log10(labels = dollar)
 p + geom_point() + scale_x_log10(labels = dollar) + geom_smooth(aes(color = continent))
 
+```
+
+**Exercise:** How can you plot to `geom`s for two different datasets on the same plot (assuming they share the same x- and y-axis)? 
+
+```{r, plotting_two_geoms}
 ## Now plotting two geoms for different data sets
 
 # Get data for points before 1970
@@ -206,6 +198,7 @@ p + geom_point() +
   geom_smooth() +
   geom_smooth(data = gmPre70, color = 'red')
 
+p + geom_point() + scale_x_log10(labels = dollar) + geom_smooth()
 ```
 
 **Exercise:** What does `fill = continent` do? What do you think about the match of colors between lines and error bands?
@@ -229,7 +222,7 @@ p + geom_point(mapping = aes(color = continent)) +
   geom_smooth(mapping = aes(color = continent), method = "gam")
 ```
 
-## Additional (not Optional) Exercises 
+## Additional Exercises 
 
 **Exercise:** Find ways to save the figures that you made so that you can use them elsewhere too. Create a new folder to save only images. Use the command for saving to save the picture for the last image in your new folder, after you have updated the axes, title, subtitle, and caption of the image. Post your solution on Slack and use it to include the final image above with a caption saying "Saved by <your-name>" inside your Slack message (see https://slack.com/help/articles/4403914924435-Add-descriptions-to-images). (Hint: `??save`)
 
@@ -243,8 +236,7 @@ p + geom_point(mapping = aes(color = continent)) +
 
 **Bonus Exercise:** Why did I load the `scales` library twice via `library(scales)` to knit? 
 
-## Assignment 1
+## Assignment 1 (optional)
 
 1. Do the exercises in these lecture notes.
 1. Knit lectures 2 to a pdf file. Get rid of those `eval=FALSE` that are in the current file. They are there to keep RStudio from complaining about code that is incomplete. 
-1. Submit the pdf on the server (explanations coming)

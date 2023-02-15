@@ -147,6 +147,7 @@ ggplot(
     ) %>%
     ggplot(mapping = aes(x = distance, y = avg_delay)) +
     geom_point() +
-    geom_smooth())
+    geom_smooth()) +
+    geom_smooth(aes(weight = N),color = "yellow")
 
 # Start: Practice functions

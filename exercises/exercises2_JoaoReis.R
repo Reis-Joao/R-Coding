@@ -85,10 +85,10 @@ flights_time_function <- function(data){
     #https://stackoverflow.com/questions/43786883/how-do-i-select-columns-that-may-or-may-not-exist
 } 
 
-#flights_subset1 <- select(flights, year, month, day, time_hour, carrier)
-#flights_subset2 <- select(flights, year, month, day, dep_time, origin, hour, minute, air_time, arr_time)
-#flights_time_function(flights_subset1)
-#flights_time_function(flights_subset2)
+# flights_subset1 <- select(flights, time_hour, month, day, year, carrier)
+# flights_subset2 <- select(flights, year, month, day, dep_time, origin, hour, minute, air_time, arr_time)
+# flights_time_function(flights_subset1)
+# flights_time_function(flights_subset2)
 
 
 # This one is probably hard to do without `where` and understanding
@@ -102,13 +102,13 @@ flights_text_function <- function(data){
 }
     # In here I am also transforming empty strings into NAs, in case Professor adds some empty rows.
     # Like that I keep a column that has every non-NA values up to 3 characters, even when it has NA/empty strings
-    # This avoids the code to return an empty variable if, for example, someone adds an empty row by mistake
+    # This avoids the code to return an empty output if, for example, someone adds an empty row by mistake
     # https://sparkbyexamples.com/r-programming/replace-empty-string-with-na-in-r-dataframe/#:~:text=R%20%E2%80%93%20Replace%20Empty%20String%20with%20NA%201,Replace%20on%20All%20Character%20columns%20...%20Mais%20itens
 
-#flights_subset1 <- select(flights, year, month, day, time_hour, carrier, dest, origin)
-#flights_subset2 <- select(flights, year, time_hour, origin)
-#flights_text_function(flights_subset1)
-#flights_text_function(flights_subset2)
+# flights_subset1 <- select(flights, year, month, day, time_hour, carrier, dest, origin)
+# flights_subset2 <- select(flights, year, time_hour, origin)
+# flights_text_function(flights_subset1)
+# flights_text_function(flights_subset2)
 
 
 # Assume that species and height are present so you can arrange by.
@@ -121,10 +121,10 @@ starwars_by_height_by_species_function <- function(data) {
     select(any_of(c("name", "height", "species")), everything()) 
 }
 
-#starwars_subset1 <- select(starwars, height, species, films, skin_color)
-#starwars_subset2 <- select(starwars, name, height, species, sex, vehicles)
-#starwars_by_height_by_species_function(starwars_subset1)
-#starwars_by_height_by_species_function(starwars_subset2)
+# starwars_subset1 <- select(starwars, height, species, films, skin_color)
+# starwars_subset2 <- select(starwars, height, species, sex, name, vehicles)
+# starwars_by_height_by_species_function(starwars_subset1)
+# starwars_by_height_by_species_function(starwars_subset2)
 
 
 # Exercise 6: Using the flights data, for each carrier, find the flight 
@@ -135,16 +135,22 @@ starwars_by_height_by_species_function <- function(data) {
 
 flights_carrier_best_worst <- flights %>%
   group_by(carrier) %>%
-  summarize(best = flight[which(dep_delay == min(dep_delay, na.rm = TRUE))][1],
-            worst = flight[which(dep_delay == max(dep_delay, na.rm = TRUE))][1]) %>%
-  # https://stackoverflow.com/questions/42132028/how-to-get-the-observation-value-by-using-the-index-number-in-r
+  summarise(best = min(dep_delay, na.rm = TRUE), worst = max(dep_delay, na.rm = TRUE)) %>%
   select(carrier, best, worst)
+
+# If the idea is to keep the flight number instead of the delay (comment out the following lines):
+
+# flights_carrier_best_worst <- flights %>%
+#   group_by(carrier) %>%
+#   summarize(best = flight[which(dep_delay == min(dep_delay, na.rm = TRUE))][1],
+#             worst = flight[which(dep_delay == max(dep_delay, na.rm = TRUE))][1]) %>%
+#   # https://stackoverflow.com/questions/42132028/how-to-get-the-observation-value-by-using-the-index-number-in-r
+#   select(carrier, best, worst)
 
 # We could eliminate the [1] if we wanted to keep all observations in which, for the same carrier,
 # there are more than one flight with the same max/min dep_delay
 
-#flights_carrier_best_worst
-
+# flights_carrier_best_worst
 
 # Exercise 7: Find the days such that the most delayed flight (by departure)
 # on that day of the year is more delayed than the most delayed flight on the 
@@ -156,7 +162,7 @@ flights_days_getting_worse <- flights %>%
   filter(dep_delay == max(dep_delay, na.rm = TRUE)) %>%
   ungroup() %>% 
   filter(dep_delay > lag(dep_delay)) %>%
-  arrange(month, day)
+  arrange(year, month, day, dep_delay)
 
 #flights_days_getting_worse
 
